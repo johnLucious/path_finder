@@ -1,20 +1,39 @@
 # IF2210: Algorithm Strategies #
 
 import os
+import math
 import os.path
 
 listNode = []		
+listOfNodes = []
+
+class ofNode:
+	def __init__(self):
+		self.cost = 0
+		self.visitedNode = []
+		self.name = ""
+		
+	def setName(self, name):
+		self.name = name
+	
+	def addCost(self, costAdd):
+		self.cost += costAdd
+		
+	def getName(self):
+		return self.name
+	
+	def getCost(self):
+		return self.cost
 
 class Node:
 	def __init__(self):
 		self.nodeAdj = []
-		self.visitedNode = []
 
+	def getAdjNode(self, i):
+		return self.nodeAdj[i]
+	
 	def addAdjNode(self, point):
 		self.nodeAdj.append(point)
-	
-	def addVisitedNode(self, point):
-		self.visitedNode.append(point)
 
 	def showAdjNodes(self):
 		return self.nodeAdj
@@ -120,6 +139,52 @@ def readFile():
 		print("::FileError: Either file is missing or is not readable")
 		return None
 
+def returnNode(node, matrix):
+	for i in range(len(matrix[0])):
+		if (matrix[0][i] == node):
+			n = i
+			break
+	return n
+	
+def euclidDist(pointA, pointB):
+	x = pointA[0] - pointB[0]
+	y = pointA[1] - pointB[1]
+	return math.sqrt(pow(x,2) + pow(y,2))
+
+def determineCost(nodeA, nodeB, matrix):
+	pathCost = matrix[returnNode(nodeA, matrix) + 2][returnNode(nodeB, matrix)]
+	heuristicCost = euclidDist(matrix[1][returnNode(nodeA, matrix)], matrix[1][returnNode(nodeB, matrix)])
+
+	return (pathCost + heuristicCost)
+
+def findLowestCost():
+	cost = 99999999
+	chosenNode = None
+	for node in listOfNodes:
+		if (cost > node.getCost()):
+			cost = node.getCost()
+			chosenNode = node.getName()
+	return chosenNode
+	
+def findPath(start, final, matrix):
+	global listNode, listOfNodes
+	currentNode = start
+	resultNode = [start]
+	
+	while not (currentNode == final):
+		for i in range(len(listNode[returnNode(currentNode, matrix)].showAdjNodes())):
+			print("flag")
+			node = ofNode()
+			node.setName(listNode[returnNode(currentNode, matrix)].getAdjNode(i))
+			node.addCost(determineCost(currentNode, matrix[0][listNode[returnNode(currentNode, matrix)].getAdjNode(i)], matrix))
+			print(node.getCost())
+			listOfNodes.append(node)
+			print(listOfNodes)
+		currentNode = findLowestCost()
+		resultNode.append(currentNode)
+		
+	return resultNode
+		
 def findAdj(matrix):
 	global listNode
 	
@@ -162,6 +227,7 @@ def main():
 					if ((containAt(s[0], matrix[0])) and (containAt(s[1], matrix[0]))):
 						start = s[0]
 						final = s[1]
+						findPath(start, final, matrix)
 					else:
 						print("::StatError: State(s) not found")
 				elif (len(s) < 2):
