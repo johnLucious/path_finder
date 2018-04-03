@@ -175,12 +175,13 @@ def findPath(start, final, matrix):
 		for i in range(len(listNode[returnNode(currentNode, matrix)].showAdjNodes())):
 			print("flag")
 			node = ofNode()
-			node.setName(listNode[returnNode(currentNode, matrix)].getAdjNode(i))
+			node.setName(matrix[0][listNode[returnNode(currentNode, matrix)].getAdjNode(i)])
 			node.addCost(determineCost(currentNode, matrix[0][listNode[returnNode(currentNode, matrix)].getAdjNode(i)], matrix))
 			print(node.getCost())
 			listOfNodes.append(node)
 			print(listOfNodes)
 		currentNode = findLowestCost()
+		print(currentNode)
 		resultNode.append(currentNode)
 		
 	return resultNode
